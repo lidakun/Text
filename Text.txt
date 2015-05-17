@@ -1,0 +1,146 @@
+import java.awt.Color;
+import java.awt.HeadlessException;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+public class GameFrame extends JFrame {
+	
+	JPanel zhuobu = new JPanel();
+	//工人
+	JLabel worker = null;
+	//箱子
+	JLabel box = null;
+	//目的地
+	JLabel goal = null;
+	JLabel[] walls = null;
+	
+	//设置图片大小
+	int imgSize = 48;
+	
+	public void setImgSize(int imgSize){
+		this.imgSize = imgSize;
+	}
+	
+	public GameFrame(String title) throws HeadlessException {
+		super(title);
+		//构造方法中调用本类的其它方法
+		this.initContentPane();
+	
+		
+	}
+	
+	/**
+	 * 设置内容面板
+	 */
+	void initContentPane() {
+		zhuobu.setBackground(Color.red);
+		zhuobu.setLayout(null);
+		//调用父类的属性和方法
+		super.setContentPane(zhuobu);
+		
+	}
+	
+	/**
+	 * 把某个图片以组件的方式加入窗体
+	 * @param imgPath  图片路径
+	 * @param x        x  
+	 * @param y        y
+	 * @param width    宽度
+	 * @param height   高度
+	 * @return         添加完的组件
+	 */
+	void addComponent(int tag, String imgPath, int x, int y) {
+		ImageIcon img = new ImageIcon(imgPath);
+		//创建JLabel并把ImageIcon通过构造方法传参传入  
+		//把食物放到盘子里
+		JLabel componet = new JLabel(img);
+		//设置盘子在桌布上的位置和大小
+		componet.setBounds(x, y, imgSize, imgSize);
+		//把盘子放到桌布上
+		zhuobu.add(componet);
+		switch (tag) {
+		case 1:
+			box = componet;
+			break;
+		case 2:
+			goal = componet;
+			break;
+		case 3:
+			worker = componet;
+			break;
+		}
+		
+	}
+	
+	void addWall(String imgPath, int[][] loactions) {
+		ImageIcon wallImg = new ImageIcon(imgPath);
+		walls = new JLabel[66 + loactions.length];
+		for (int i = 0; i < walls.length; i++) {
+			//创建没每一个围墙，他们使用的是同一个图片
+			walls[i] = new JLabel(wallImg);
+		}
+		for (int i = 0; i < walls.length; i++) {
+			//创建没每一个围墙，他们使用的是同一个图片
+			walls[i] = new JLabel(wallImg);
+		}
+		int index = 0;
+		/*分别设置各个图片位置*/
+		for (int i = 0; i < 14; i++) {
+			//左边墙
+			walls[index].setBounds(0, i * imgSize, imgSize, imgSize);
+			zhuobu.add(walls[index]);
+			index++;
+			//右边墙
+			walls[index].setBounds(20 * imgSize, i * imgSize, imgSize, imgSize);
+			zhuobu.add(walls[index]);
+			index++;
+		}
+		for (int i = 0; i < 19; i++) {
+			//上边墙
+			walls[index].setBounds((i + 1) * imgSize, 0, imgSize, imgSize);
+			zhuobu.add(walls[index]);
+			index++;
+			//下边墙
+			walls[index].setBounds((i + 1) * imgSize, 13 * imgSize, imgSize, imgSize);
+			zhuobu.add(walls[index]);
+			index++;
+		}
+		//添加中间障碍 耦合 解耦
+		for (int i = 0; i < loactions.length; i++) {
+			
+			walls[index].setBounds(loactions[i][0]* imgSize, loactions[i][1]* imgSize, imgSize, imgSize);
+			zhuobu.add(walls[index]);
+			index++;
+		}
+	}
+}
+public class Run {
+	public static void main(String[] args) {
+		GameFrame gameFrame = new GameFrame("推箱子游戏 …");
+		//设置大小
+		gameFrame.setBounds(100, 50, 21 * 48 + 5, 14 * 48 + 25);
+		//窗体大小不可变
+		gameFrame.setResizable(false);
+		gameFrame.setImgSize(48);
+		gameFrame.addComponent(3, "workerUp.png", 400, 100);
+		gameFrame.addComponent(1, "box.png", 160, 60);
+		gameFrame.addComponent(2, "goal.png", 80, 520);
+		int[][] wallLocations ={
+				{4, 5},{5, 5},{6, 5},{7, 5},
+				{8, 5},{9, 5},{10, 5},{6, 8},
+				{7, 8},
+				{8, 8},
+				{9, 8},
+				{10, 8},
+				{11, 5}
+				};
+		gameFrame.addWall("wall.png", wallLocations);
+
+		gameFrame.setVisible(true);
+		
+		 
+	}
+}
